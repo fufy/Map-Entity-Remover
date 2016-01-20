@@ -1,0 +1,53 @@
+/*
+	Important: Acest plugin blocheaza droparea armelor.
+*/
+
+#include <amxmodx>
+#include <cstrike>
+#include <fakemeta>
+
+public plugin_init( )
+{
+	register_plugin( "Money Pick Up","1.0", "Fuffy" );
+	
+	register_clcmd( "drop", "CmdDROP" );
+	register_forward( FM_Touch, "WeaponTCH" );
+}
+
+public WeaponTCH( Entity, Client )
+{
+	if (!pev_valid(Entity) || !pev_valid(Client) || !is_user_alive(Client))
+		return FMRES_IGNORED;
+
+	new Model[32];
+	pev(Entity, pev_model, Model, 31);
+
+	if(equal( Model, "models/w_deagle.mdl") )
+		m_give(Client, 200);
+
+	else if(equal( Model, "models/w_awp.mdl") )
+		m_give(Client, 200);
+
+
+	else if(equal( Model, "models/w_scout.mdl") )
+		m_give(Client, 200);
+
+
+	else if(equal( Model, "models/w_usp.mdl") )
+		m_give(Client, 200);
+
+
+	else if(equal( Model, "models/w_glock18.mdl") )
+		m_give(Client, 200);
+
+	else 
+		return FMRES_IGNORED;
+ 
+	return FMRES_IGNORED;
+}
+
+m_give( id, value )
+{
+	cs_set_user_money( id, cs_get_user_money( id ) + value );
+}
+public CmdDROP( const id ) return PLUGIN_HANDLED;
