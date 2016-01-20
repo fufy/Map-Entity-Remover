@@ -1,5 +1,9 @@
 /*
 	Important: Acest plugin blocheaza droparea armelor.
+	
+	Un-tested VERSION!
+	
+		Thanks to Bugsy & hleV.
 */
 
 #include <amxmodx>
