@@ -1,0 +1,84 @@
+#include <amxmodx>
+#include <amxmisc>
+#include <fakemeta>
+
+new gEntityID;
+
+new bool:remover_on[33];
+public plugin_init( )
+{
+	register_plugin( "Map Entity Remover","1.1", "Fuffy" );
+	
+	register_forward( FM_Touch, "WeaponTCH" );
+	register_clcmd( "say /remover", "RemoverBool" );
+}
+
+public client_putinserver( id )
+{
+	if( is_user_admin( id ) )
+		remover_on[ id ] = false;
+}
+public RemoverBool( const id )
+{
+	if( !is_user_admin( id ) )
+	{
+		client_print( id, print_chat, "You have no access to this command!" );
+		return PLUGIN_HANDLED;
+	}
+
+	if( !remover_on[ id ] )
+	{
+		remover_on[ id ] = true;
+		client_print( id, print_chat, "You have activated entity remover!" );
+		return PLUGIN_HANDLED;
+	}
+
+	else
+	{
+		remover_on[ id ] = false;
+		client_print( id, print_chat, "You have deactivated entity remover!" );
+		return PLUGIN_HANDLED;
+	}
+	return PLUGIN_HANDLED;
+}
+public WeaponTCH( Entity, Client )
+{
+	if (!pev_valid(Entity) || !pev_valid(Client) || !is_user_alive(Client))
+		return FMRES_IGNORED;
+
+	if( is_user_admin( Client ) && remover_on[ Client ] == true )
+	{
+		new menu = menu_create( "\r[ \yAdmin Entity Remover \r] \gDo you wanna remove this entity?", "menu_handler" );
+
+		menu_additem( menu, "\gYes", "", 0 );
+		menu_additem( menu, "\gNo", "", 0 );
+
+		menu_setprop( menu, MPROP_EXIT, MEXIT_ALL );
+
+		menu_display( Client, menu, 0 );
+
+		gEntityID = Entity;
+	}
+ 
+	return FMRES_IGNORED;
+}
+
+public menu_handler( id, menu, item )
+{
+	switch( item )
+	{
+		case 0:
+		{
+			client_print( id, print_center, "You have removed this entity!" );
+            		engfunc( EngFunc_RemoveEntity, gEntityID );
+			menu_destroy( menu );
+		}
+
+		case 1:
+		{
+			client_print( id, print_center, "Operation failed!" );
+			menu_destroy( menu );
+		}
+
+	}
+}
