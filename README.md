@@ -1,3 +1,3 @@
-# PickUp-Items-and-get-bonus
+# Map Entity Remover
 
 Just be happy, life is wonderful.
